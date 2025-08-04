@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mural da Equipe</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 </head>
 <body>
 
@@ -16,12 +17,15 @@
   </header>
 
   <main>
+    <!-- Mural de posts -->
     <section id="mural">
-      <div id="postsContainer">
-        <!-- Postagens renderizadas aqui -->
+      <div class="filtro">
+        <input type="text" id="filtroNome" placeholder="Filtrar por nome..." />
       </div>
+      <div id="postsContainer"></div>
     </section>
 
+    <!-- Formulário de postagem -->
     <section id="formulario" class="escondido">
       <form id="postForm">
         <input type="text" id="nome" placeholder="Seu nome" required />
@@ -29,6 +33,7 @@
         <input type="file" id="mídia" accept="image/*,video/*" />
         <button type="submit">Publicar</button>
       </form>
+
       <div id="mensagemSucesso" class="escondido">
         <p>✅ Publicado com sucesso!</p>
         <button id="voltar">Voltar ao mural</button>
