@@ -135,33 +135,4 @@ btnVoltarMural.addEventListener("click", () => {
   formPublicacao.style.display = "block";
   msgSucesso.classList.add("escondido");
 });
-/* Responsividade para telas até 600px (celulares) */
-@media (max-width: 600px) {
-  header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
 
-  button.btn-abrir {
-    width: 100%;
-    max-width: 300px;
-    margin-top: 15px;
-    font-size: 1.2rem;
-  }
-  
-  /* Opcional: ajustar tamanho do título */
-  header h1 {
-    font-size: 1.5rem;
-  }
-  
-  /* Ajustar posts para ficarem centralizados e ocupando mais largura */
-  #postsContainer {
-    padding: 0 10px;
-  }
-
-  .post-card {
-    width: 100%;
-    margin-bottom: 15px;
-  }
-}
