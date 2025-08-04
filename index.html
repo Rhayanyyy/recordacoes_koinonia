@@ -3,28 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mural da Gincana</title>
+  <title>Mural Interativo</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>Mural da Gincana</h1>
-    <div id="userStatus">Não está logado</div>
-    <button id="btnLoginGoogle">Entrar com Google</button>
-    <button id="btnLogout" style="display:none;">Sair</button>
-  </header>
 
-  <section id="postsContainer" class="posts-container"></section>
+    <div class="logo-fundo"></div>
 
-  <section id="formulario" class="mostrar">
-    <form id="postForm">
-      <input type="text" id="nome" placeholder="Seu nome" required />
-      <textarea id="mensagem" placeholder="Sua mensagem" rows="4" required></textarea>
-      <input type="file" id="midia" accept="image/*,video/*" />
-      <button type="submit">Publicar</button>
-    </form>
-  </section>
 
-  <script type="module" src="main.js"></script>
+<header>
+  <h1>Mural da Koinonia</h1>
+  <div class="top-bar">
+    <button id="abrirFormulario" class="btn-abrir">Fazer uma publicação</button>
+  </div>
+</header>
+
+
+
+  <main>
+    <section id="mural">
+      <div id="postsContainer" class="posts-container">
+        <!-- Cards de posts aparecerão aqui -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal de visualização do post -->
+  <div id="modalPost" class="modal escondido">
+    <div class="modal-conteudo">
+      <button id="btnFecharModal" class="btn-fechar">✖</button>
+      <div id="conteudoPost"></div>
+    </div>
+  </div>
+
+  <!-- Modal de criar publicação -->
+  <div id="modalPublicar" class="modal escondido">
+    <div class="modal-conteudo form-publicar">
+      <button id="btnFecharPublicar" class="btn-fechar">✖</button>
+      <form id="formPublicacao">
+        <input type="text" id="nome" placeholder="Seu nome" required />
+        <textarea id="comentario" placeholder="Seu comentário" required></textarea>
+        <input type="file" id="arquivo" accept="image/*,video/*" />
+        <button type="submit">Enviar</button>
+      </form>
+      <div id="msgSucesso" class="mensagem-sucesso escondido">
+        Enviado com sucesso!
+        <button id="btnVoltarMural">Voltar ao mural</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
 </body>
 </html>

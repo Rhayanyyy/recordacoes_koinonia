@@ -1,119 +1,141 @@
-// main.js
-import { db, storage, auth, provider } from "./firebase.js";
-import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-const form = document.getElementById("postForm");
-const nomeInput = document.getElementById("nome");
-const msgInput = document.getElementById("mensagem");
-const midiaInput = document.getElementById("midia");
+const btnAbrirPublicacao = document.getElementById("btnAbrirPublicacao");
+const modalPublicar = document.getElementById("modalPublicar");
+const modalPost = document.getElementById("modalPost");
+const btnFecharModal = document.getElementById("btnFecharModal");
+const btnFecharPublicar = document.getElementById("btnFecharPublicar");
 const postsContainer = document.getElementById("postsContainer");
-const btnLoginGoogle = document.getElementById("btnLoginGoogle");
-const btnLogout = document.getElementById("btnLogout");
-const userStatus = document.getElementById("userStatus");
+const formPublicacao = document.getElementById("formPublicacao");
+const conteudoPost = document.getElementById("conteudoPost");
+const msgSucesso = document.getElementById("msgSucesso");
+const btnVoltarMural = document.getElementById("btnVoltarMural");
 
-// Controle estado do usuário
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    userStatus.textContent = `Logado como: ${user.displayName}`;
-    nomeInput.value = user.displayName;
-    nomeInput.disabled = true;
-    btnLoginGoogle.style.display = "none";
-    btnLogout.style.display = "inline-block";
-  } else {
-    userStatus.textContent = "Não está logado";
-    nomeInput.value = "";
-    nomeInput.disabled = false;
-    btnLoginGoogle.style.display = "inline-block";
-    btnLogout.style.display = "none";
+let posts = [];
+
+// Função pra criar card e colocar no mural
+function criarCardPost(post, index) {
+  const card = document.createElement("div");
+  card.classList.add("post-card");
+  card.dataset.index = index;
+
+  let mediaHTML = "";
+  if (post.tipo === "imagem") {
+    mediaHTML = `<img src="${post.media}" alt="Imagem do post">`;
+  } else if (post.tipo === "video") {
+    mediaHTML = `<video src="${post.media}" controls></video>`;
   }
+
+  card.innerHTML = `
+    <strong>${post.nome}</strong>
+    <p>${post.comentario}</p>
+    ${mediaHTML}
+  `;
+
+  // Evento abrir modal do post
+  card.addEventListener("click", () => abrirModalPost(index));
+
+  return card;
+}
+
+// Mostrar modal do post clicado
+function abrirModalPost(index) {
+  const post = posts[index];
+  if (!post) return;
+
+  let mediaHTML = "";
+  if (post.tipo === "imagem") {
+    mediaHTML = `<img src="${post.media}" alt="Imagem do post" style="max-width:100%; max-height:300px; border-radius:8px;">`;
+  } else if (post.tipo === "video") {
+    mediaHTML = `<video src="${post.media}" controls autoplay style="max-width:100%; max-height:300px; border-radius:8px;"></video>`;
+  }
+
+  conteudoPost.innerHTML = `
+    <strong>${post.nome}</strong>
+    <p>${post.comentario}</p>
+    ${mediaHTML}
+  `;
+
+  modalPost.classList.remove("escondido");
+}
+
+// Fecha modal do post
+btnFecharModal.addEventListener("click", () => {
+  modalPost.classList.add("escondido");
+  // Para vídeos que ficaram tocando
+  const video = conteudoPost.querySelector("video");
+  if (video) video.pause();
 });
 
-// Login com Google
-btnLoginGoogle.addEventListener("click", () => {
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      alert(`Bem-vindo(a) ${result.user.displayName}!`);
-    })
-    .catch((error) => {
-      console.error("Erro no login Google:", error);
-      alert("Erro ao tentar logar com Google.");
-    });
+// Abre modal de publicação
+btnAbrirPublicacao.addEventListener("click", () => {
+  modalPublicar.classList.remove("escondido");
+  msgSucesso.classList.add("escondido");
+  formPublicacao.style.display = "block";
 });
 
-// Logout
-btnLogout.addEventListener("click", () => {
-  signOut(auth).then(() => {
-    alert("Você saiu da conta.");
-  });
+// Fecha modal de publicação
+btnFecharPublicar.addEventListener("click", () => {
+  modalPublicar.classList.add("escondido");
+  formPublicacao.reset();
 });
 
-// Evento de envio de postagem
-form.addEventListener("submit", async (e) => {
+// Envia o formulário da publicação
+formPublicacao.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const nome = nomeInput.value.trim();
-  const mensagem = msgInput.value.trim();
-  const arquivo = midiaInput.files[0];
+  const nome = document.getElementById("nome").value.trim();
+  const comentario = document.getElementById("comentario").value.trim();
+  const arquivoInput = document.getElementById("arquivo");
+  const arquivo = arquivoInput.files[0];
 
-  if (!nome || !mensagem) {
-    alert("Por favor, preencha o nome e a mensagem!");
+  if (!nome || !comentario) {
+    alert("Preencha nome e comentário!");
     return;
   }
 
-  let midiaURL = null;
+  if (arquivo) {
+    const tipo = arquivo.type.startsWith("image/") ? "imagem" :
+                 arquivo.type.startsWith("video/") ? "video" : null;
 
-  try {
-    if (arquivo) {
-      const caminho = `midias/${Date.now()}_${arquivo.name}`;
-      const arquivoRef = ref(storage, caminho);
-
-      await uploadBytes(arquivoRef, arquivo);
-
-      midiaURL = await getDownloadURL(arquivoRef);
+    if (!tipo) {
+      alert("Arquivo inválido! Use imagem ou vídeo.");
+      return;
     }
 
-    await addDoc(collection(db, "posts"), {
-      nome,
-      mensagem,
-      midiaURL,
-      data: serverTimestamp(),
-    });
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      adicionarPost(nome, comentario, tipo, event.target.result);
+    };
+    reader.readAsDataURL(arquivo);
 
-    alert("Postagem enviada com sucesso!");
-    form.reset();
-
-  } catch (erro) {
-    console.error("Erro ao postar:", erro);
-    alert("Algo deu errado ao enviar. Veja o console para detalhes.");
+  } else {
+    // Sem mídia
+    adicionarPost(nome, comentario, null, null);
   }
 });
 
-// Exibe posts
-const q = query(collection(db, "posts"), orderBy("data", "desc"));
+// Função que adiciona post e atualiza mural
+function adicionarPost(nome, comentario, tipo, media) {
+  posts.unshift({ nome, comentario, tipo, media });
+  atualizarMural();
 
-onSnapshot(q, (snapshot) => {
+  // Mostra mensagem sucesso e esconde formulário
+  formPublicacao.style.display = "none";
+  msgSucesso.classList.remove("escondido");
+  formPublicacao.reset();
+}
+
+// Atualiza o mural mostrando os cards
+function atualizarMural() {
   postsContainer.innerHTML = "";
-
-  if (snapshot.empty) {
-    postsContainer.innerHTML = "<p>Nenhuma recordação postada ainda.</p>";
-    return;
-  }
-
-  snapshot.forEach((doc) => {
-    const dados = doc.data();
-
-    const postEl = document.createElement("div");
-    postEl.classList.add("post");
-
-    postEl.innerHTML = `
-      <strong>${dados.nome}</strong>
-      <p>${dados.mensagem}</p>
-      ${dados.midiaURL ? `<img src="${dados.midiaURL}" alt="Mídia postada" />` : ""}
-      <hr />
-    `;
-
-    postsContainer.appendChild(postEl);
+  posts.forEach((post, index) => {
+    const card = criarCardPost(post, index);
+    postsContainer.appendChild(card);
   });
+}
+
+// Voltar ao mural após sucesso
+btnVoltarMural.addEventListener("click", () => {
+  modalPublicar.classList.add("escondido");
+  formPublicacao.style.display = "block";
+  msgSucesso.classList.add("escondido");
 });
