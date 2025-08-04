@@ -1,11 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <title>Mural da Equipe</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    bla bla
+
+  <div class="fundo-logo"></div>
+
+  <header>
+    <h1>Mural da Equipe</h1>
+    <button id="abrirFormulario">Fazer uma publicação</button>
+  </header>
+
+  <main>
+    <section id="mural">
+      <div id="postsContainer">
+        <!-- Postagens renderizadas aqui -->
+      </div>
+    </section>
+
+    <section id="formulario" class="escondido">
+      <form id="postForm">
+        <input type="text" id="nome" placeholder="Seu nome" required />
+        <textarea id="mensagem" placeholder="Escreva sua mensagem..." required></textarea>
+        <input type="file" id="mídia" accept="image/*,video/*" />
+        <button type="submit">Publicar</button>
+      </form>
+      <div id="mensagemSucesso" class="escondido">
+        <p>✅ Publicado com sucesso!</p>
+        <button id="voltar">Voltar ao mural</button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
 </html>

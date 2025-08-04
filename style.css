@@ -1,0 +1,136 @@
+/* Fonte e reset */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f5f1e6;
+  color: #1a1a1a;
+  position: relative;
+}
+
+/* Fundo com a logo */
+.fundo-logo {
+  background-image: url('assets/logo-equipe.png'); /* ajuste o caminho */
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.05;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+/* Cabeçalho fixo */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #7b1e3b;
+  color: #fff;
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 1px;
+}
+
+header button {
+  background-color: #f5f1e6;
+  color: #7b1e3b;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+header button:hover {
+  background-color: #e0d4c3;
+}
+
+/* Área principal */
+main {
+  max-width: 800px;
+  margin: auto;
+  padding: 2rem 1rem;
+}
+
+section#formulario,
+section#mural {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+/* Formulário */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+input, textarea, button {
+  font-size: 1rem;
+  padding: 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+form button {
+  background-color: #7b1e3b;
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+
+form button:hover {
+  background-color: #5e172d;
+}
+
+/* Postagens */
+.post {
+  background: #fdfdfd;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 10px;
+  border: 1px solid #e0d4c3;
+}
+
+.post strong {
+  color: #7b1e3b;
+  font-weight: 600;
+}
+
+.post img, .post video {
+  max-width: 100%;
+  border-radius: 6px;
+  margin-top: 0.8rem;
+}
+
+/* Escondido */
+.escondido {
+  display: none;
+}
+
+/* Sucesso */
+#mensagemSucesso {
+  text-align: center;
+}
+
+#mensagemSucesso button {
+  margin-top: 1rem;
+  background-color: #7b1e3b;
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
