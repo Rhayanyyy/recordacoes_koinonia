@@ -195,25 +195,35 @@ header {
   top: 20px;
 }
 /* Responsividade para telas até 600px (celulares) */
+/* Responsividade para telas até 600px (celulares) */
 @media (max-width: 600px) {
   header {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    position: relative;
+    z-index: 1;
   }
 
   header h1 {
-    font-size: 1.5rem;
-    margin-bottom: 10px; /* espaçamento abaixo do título */
+    font-size: 1.6rem;
+    margin-bottom: 15px; /* aumenta espaço abaixo do título */
+    z-index: 2;
+  }
+
+  .top-bar {
+    position: static;
+    margin-top: 5px;
+    z-index: 3; /* garante que o botão fica acima do header mas abaixo do título */
   }
 
   button.btn-abrir {
     width: 100%;
-    max-width: 300px;
-    margin-top: 10px; /* espaçamento acima do botão */
+    max-width: 320px;
     font-size: 1.2rem;
   }
 
+  /* Ajuste do conteúdo do mural */
   #postsContainer {
     padding: 0 10px;
   }
