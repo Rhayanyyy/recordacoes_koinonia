@@ -1,22 +1,15 @@
 const btnAbrirPublicacao = document.getElementById("btnAbrirPublicacao");
 const modalPublicar = document.getElementById("modalPublicar");
-const modalPost = document.getElementById("modalPost");
-const btnFecharModal = document.getElementById("btnFecharModal");
-const btnFecharPublicar = document.getElementById("btnFecharPublicar");
-const postsContainer = document.getElementById("postsContainer");
 const formPublicacao = document.getElementById("formPublicacao");
-const conteudoPost = document.getElementById("conteudoPost");
 const msgSucesso = document.getElementById("msgSucesso");
-const btnVoltarMural = document.getElementById("btnVoltarMural");
 
-let posts = [];
-
-// Abre modal publicar
+// Abre modal de publicação
 btnAbrirPublicacao.addEventListener("click", () => {
   modalPublicar.classList.remove("escondido");
   msgSucesso.classList.add("escondido");
   formPublicacao.style.display = "block";
 });
+
 
 // Fecha modal publicar
 btnFecharPublicar.addEventListener("click", () => {

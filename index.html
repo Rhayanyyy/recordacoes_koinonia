@@ -13,7 +13,8 @@
   <header>
     <h1>Mural da Koinonia</h1>
   </header>
-  <button id="abrirFormulario" class="btn-abrir">Fazer uma publicação</button>
+ <button id="btnAbrirPublicacao" class="btn-abrir">Fazer uma publicação</button>
+
 </div>
 
 
@@ -35,21 +36,22 @@
   </div>
 
   <!-- Modal de publicar -->
-  <div id="modalPublicar" class="modal escondido">
-    <div class="modal-conteudo form-publicar">
-      <button id="btnFecharPublicar" class="btn-fechar">✖</button>
-      <form id="formPublicacao">
-        <input type="text" id="nome" placeholder="Seu nome" required />
-        <textarea id="comentario" placeholder="Seu comentário" required></textarea>
-        <input type="file" id="arquivo" accept="image/*,video/*" />
-        <button type="submit">Enviar</button>
-      </form>
-      <div id="msgSucesso" class="mensagem-sucesso escondido">
-        Enviado com sucesso!
-        <button id="btnVoltarMural">Voltar ao mural</button>
-      </div>
+<div id="modalPublicar" class="modal escondido">
+  <div class="modal-conteudo form-publicar">
+    <button id="btnFecharPublicar" class="btn-fechar">✖</button>
+    <form id="formPublicacao">
+      <input type="text" id="nome" placeholder="Seu nome" required />
+      <textarea id="comentario" placeholder="Seu comentário" required></textarea>
+      <input type="file" id="arquivo" accept="image/*,video/*" />
+      <button type="submit">Enviar</button>
+    </form>
+    <div id="msgSucesso" class="mensagem-sucesso escondido">
+      Enviado com sucesso!
+      <button id="btnVoltarMural">Voltar ao mural</button>
     </div>
   </div>
+</div>
+
 
   <script src="main.js"></script>
 </body>
