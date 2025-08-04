@@ -8,16 +8,26 @@ body {
 }
 
 /* Fundo com a logo */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #7b1e3b; /* VINHO COMO FUNDO */
+  color: #f5f1e6; /* Texto bege */
+  position: relative;
+}
+
+/* Fundo com a logo (marca d'água central) */
 .fundo-logo {
-  background-image: url('assets/logo-equipe.png'); /* ajuste o caminho */
-  background-size: contain;
+  background-image: url(assets/Ativo\ 10.png); /* Caminho da logo */
+  background-size: 50%;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.05;
+  opacity: 0.04; /* Bem sutil */
   position: fixed;
   inset: 0;
   z-index: -1;
 }
+
 
 /* Cabeçalho fixo */
 header {
