@@ -202,19 +202,18 @@ header {
     text-align: center;
   }
 
+  header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 10px; /* espaçamento abaixo do título */
+  }
+
   button.btn-abrir {
     width: 100%;
     max-width: 300px;
-    margin-top: 15px;
+    margin-top: 10px; /* espaçamento acima do botão */
     font-size: 1.2rem;
   }
-  
-  /* Opcional: ajustar tamanho do título */
-  header h1 {
-    font-size: 1.5rem;
-  }
-  
-  /* Ajustar posts para ficarem centralizados e ocupando mais largura */
+
   #postsContainer {
     padding: 0 10px;
   }
