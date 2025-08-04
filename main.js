@@ -11,74 +11,27 @@ const btnVoltarMural = document.getElementById("btnVoltarMural");
 
 let posts = [];
 
-// Função pra criar card e colocar no mural
-function criarCardPost(post, index) {
-  const card = document.createElement("div");
-  card.classList.add("post-card");
-  card.dataset.index = index;
-
-  let mediaHTML = "";
-  if (post.tipo === "imagem") {
-    mediaHTML = `<img src="${post.media}" alt="Imagem do post">`;
-  } else if (post.tipo === "video") {
-    mediaHTML = `<video src="${post.media}" controls></video>`;
-  }
-
-  card.innerHTML = `
-    <strong>${post.nome}</strong>
-    <p>${post.comentario}</p>
-    ${mediaHTML}
-  `;
-
-  // Evento abrir modal do post
-  card.addEventListener("click", () => abrirModalPost(index));
-
-  return card;
-}
-
-// Mostrar modal do post clicado
-function abrirModalPost(index) {
-  const post = posts[index];
-  if (!post) return;
-
-  let mediaHTML = "";
-  if (post.tipo === "imagem") {
-    mediaHTML = `<img src="${post.media}" alt="Imagem do post" style="max-width:100%; max-height:300px; border-radius:8px;">`;
-  } else if (post.tipo === "video") {
-    mediaHTML = `<video src="${post.media}" controls autoplay style="max-width:100%; max-height:300px; border-radius:8px;"></video>`;
-  }
-
-  conteudoPost.innerHTML = `
-    <strong>${post.nome}</strong>
-    <p>${post.comentario}</p>
-    ${mediaHTML}
-  `;
-
-  modalPost.classList.remove("escondido");
-}
-
-// Fecha modal do post
-btnFecharModal.addEventListener("click", () => {
-  modalPost.classList.add("escondido");
-  // Para vídeos que ficaram tocando
-  const video = conteudoPost.querySelector("video");
-  if (video) video.pause();
-});
-
-// Abre modal de publicação
+// Abre modal publicar
 btnAbrirPublicacao.addEventListener("click", () => {
   modalPublicar.classList.remove("escondido");
   msgSucesso.classList.add("escondido");
   formPublicacao.style.display = "block";
 });
 
-// Fecha modal de publicação
+// Fecha modal publicar
 btnFecharPublicar.addEventListener("click", () => {
   modalPublicar.classList.add("escondido");
   formPublicacao.reset();
 });
 
-// Envia o formulário da publicação
+// Fecha modal post
+btnFecharModal.addEventListener("click", () => {
+  modalPost.classList.add("escondido");
+  const video = conteudoPost.querySelector("video");
+  if (video) video.pause();
+});
+
+// Formulário enviar publicação
 formPublicacao.addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -108,23 +61,21 @@ formPublicacao.addEventListener("submit", (e) => {
     reader.readAsDataURL(arquivo);
 
   } else {
-    // Sem mídia
     adicionarPost(nome, comentario, null, null);
   }
 });
 
-// Função que adiciona post e atualiza mural
+// Adiciona post no array e atualiza mural
 function adicionarPost(nome, comentario, tipo, media) {
   posts.unshift({ nome, comentario, tipo, media });
   atualizarMural();
 
-  // Mostra mensagem sucesso e esconde formulário
   formPublicacao.style.display = "none";
   msgSucesso.classList.remove("escondido");
   formPublicacao.reset();
 }
 
-// Atualiza o mural mostrando os cards
+// Atualiza mural com os posts
 function atualizarMural() {
   postsContainer.innerHTML = "";
   posts.forEach((post, index) => {
@@ -133,7 +84,52 @@ function atualizarMural() {
   });
 }
 
-// Voltar ao mural após sucesso
+// Cria card post
+function criarCardPost(post, index) {
+  const card = document.createElement("div");
+  card.classList.add("post-card");
+  card.dataset.index = index;
+
+  let mediaHTML = "";
+  if (post.tipo === "imagem") {
+    mediaHTML = `<img src="${post.media}" alt="Imagem do post">`;
+  } else if (post.tipo === "video") {
+    mediaHTML = `<video src="${post.media}" controls></video>`;
+  }
+
+  card.innerHTML = `
+    <strong>${post.nome}</strong>
+    <p>${post.comentario}</p>
+    ${mediaHTML}
+  `;
+
+  card.addEventListener("click", () => abrirModalPost(index));
+
+  return card;
+}
+
+// Abre modal do post
+function abrirModalPost(index) {
+  const post = posts[index];
+  if (!post) return;
+
+  let mediaHTML = "";
+  if (post.tipo === "imagem") {
+    mediaHTML = `<img src="${post.media}" alt="Imagem do post" style="max-width:100%; max-height:300px; border-radius:8px;">`;
+  } else if (post.tipo === "video") {
+    mediaHTML = `<video src="${post.media}" controls autoplay style="max-width:100%; max-height:300px; border-radius:8px;"></video>`;
+  }
+
+  conteudoPost.innerHTML = `
+    <strong>${post.nome}</strong>
+    <p>${post.comentario}</p>
+    ${mediaHTML}
+  `;
+
+  modalPost.classList.remove("escondido");
+}
+
+// Botão voltar ao mural após sucesso
 btnVoltarMural.addEventListener("click", () => {
   modalPublicar.classList.add("escondido");
   formPublicacao.style.display = "block";
