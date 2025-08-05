@@ -2,9 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebas
 import {
   getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-import {
-  getStorage, ref, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   // Configuração Firebase
@@ -20,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Inicialização Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  const storage = getStorage(app);
 
   // Variáveis globais
   let posts = []; 
@@ -91,10 +87,25 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        // Upload no Firebase Storage
-        const storageRef = ref(storage, `midias/${Date.now()}_${arquivo.name}`);
-        await uploadBytes(storageRef, arquivo);
-        mediaURL = await getDownloadURL(storageRef);
+        // Upload via ImgBB
+        if (tipo === "imagem") {
+          const formData = new FormData();
+          formData.append("image", arquivo);
+
+          // 🔐 Substitua por sua própria API Key do ImgBB
+          const imgbbApiKey = "63c6d97fa739355b5340a96aeb61f7f5";
+
+          const response = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
+            method: "POST",
+            body: formData
+          });
+
+          const data = await response.json();
+          mediaURL = data.data.url;
+        } else {
+          alert("Por enquanto, apenas imagens são suportadas com ImgBB.");
+          return;
+        }
       }
 
       // Salvar post no Firestore
@@ -176,5 +187,4 @@ document.addEventListener("DOMContentLoaded", () => {
     posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     atualizarMural();
   });
-
 });
