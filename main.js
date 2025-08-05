@@ -1,3 +1,24 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import {
+  getStorage, ref, uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDx7T6bMgtNFuiI3ZNngYN-a7fhslXeR9k",
+  authDomain: "recordacoes-koinoniaa.firebaseapp.com",
+  projectId: "recordacoes-koinoniaa",
+  storageBucket: "recordacoes-koinoniaa.appspot.com", // ✅ Aqui está o conserto!
+  messagingSenderId: "18159549925",
+  appId: "1:18159549925:web:f7d9f28e73b65fc76fc30c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
 const btnAbrirPublicacao = document.getElementById("btnAbrirPublicacao");
 const modalPublicar = document.getElementById("modalPublicar");
 const formPublicacao = document.getElementById("formPublicacao");
@@ -25,7 +46,7 @@ btnFecharModal.addEventListener("click", () => {
 });
 
 // Formulário enviar publicação
-formPublicacao.addEventListener("submit", (e) => {
+formPublicacao.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const nome = document.getElementById("nome").value.trim();
@@ -38,25 +59,44 @@ formPublicacao.addEventListener("submit", (e) => {
     return;
   }
 
-  if (arquivo) {
-    const tipo = arquivo.type.startsWith("image/") ? "imagem" :
-                 arquivo.type.startsWith("video/") ? "video" : null;
+  try {
+    let tipo = null;
+    let mediaURL = null;
 
-    if (!tipo) {
-      alert("Arquivo inválido! Use imagem ou vídeo.");
-      return;
+    if (arquivo) {
+      tipo = arquivo.type.startsWith("image/") ? "imagem" :
+             arquivo.type.startsWith("video/") ? "video" : null;
+
+      if (!tipo) {
+        alert("Arquivo inválido! Use imagem ou vídeo.");
+        return;
+      }
+
+      // Upload para Firebase Storage
+      const storageRef = ref(storage, `midias/${Date.now()}_${arquivo.name}`);
+      await uploadBytes(storageRef, arquivo);
+      mediaURL = await getDownloadURL(storageRef);
     }
 
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      adicionarPost(nome, comentario, tipo, event.target.result);
-    };
-    reader.readAsDataURL(arquivo);
+    // Salvar post no Firestore
+    await addDoc(collection(db, "posts"), {
+      nome,
+      comentario,
+      tipo,
+      media: mediaURL,
+      data: serverTimestamp()
+    });
 
-  } else {
-    adicionarPost(nome, comentario, null, null);
+    // Mostra mensagem sucesso e esconde formulário
+    formPublicacao.style.display = "none";
+    msgSucesso.classList.remove("escondido");
+    formPublicacao.reset();
+
+  } catch (error) {
+    alert("Erro ao enviar a publicação: " + error.message);
   }
 });
+
 
 // Adiciona post no array e atualiza mural
 function adicionarPost(nome, comentario, tipo, media) {
@@ -129,3 +169,10 @@ btnVoltarMural.addEventListener("click", () => {
   msgSucesso.classList.add("escondido");
 });
 
+import { query, orderBy, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+const q = query(collection(db, "posts"), orderBy("data", "desc"));
+onSnapshot(q, (snapshot) => {
+  posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  atualizarMural();
+});
