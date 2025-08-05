@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://rhvanyvy.github.io/recordacoes_koinonia/"],
+    "method": ["GET", "POST", "PUT", "DELETE"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": ["Content-Type", "Authorization"]
+  }
+]
