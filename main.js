@@ -22,8 +22,8 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 
 // Variáveis globais
-let posts = []; // <<< Declarar aqui para evitar ReferenceError
-const postsContainer = document.getElementById("postsContainer"); // Certifique que exista no HTML
+let posts = []; // Declarar posts aqui para evitar erro
+const postsContainer = document.getElementById("postsContainer");
 
 // Elementos do DOM
 const btnAbrirPublicacao = document.getElementById("btnAbrirPublicacao");
@@ -36,27 +36,27 @@ const modalPost = document.getElementById("modalPost");
 const conteudoPost = document.getElementById("conteudoPost");
 const btnVoltarMural = document.getElementById("btnVoltarMural");
 
-// Abre modal de publicação
+// Abrir modal publicar
 btnAbrirPublicacao.addEventListener("click", () => {
   modalPublicar.classList.remove("escondido");
   msgSucesso.classList.add("escondido");
   formPublicacao.style.display = "block";
 });
 
-// Fecha modal publicar
+// Fechar modal publicar
 btnFecharPublicar.addEventListener("click", () => {
   modalPublicar.classList.add("escondido");
   formPublicacao.reset();
 });
 
-// Fecha modal post
+// Fechar modal post
 btnFecharModal.addEventListener("click", () => {
   modalPost.classList.add("escondido");
   const video = conteudoPost.querySelector("video");
   if (video) video.pause();
 });
 
-// Voltar ao mural após sucesso da publicação
+// Voltar ao mural após sucesso
 btnVoltarMural.addEventListener("click", () => {
   modalPublicar.classList.add("escondido");
   formPublicacao.style.display = "block";
@@ -90,7 +90,7 @@ formPublicacao.addEventListener("submit", async (e) => {
         return;
       }
 
-      // Upload para Firebase Storage
+      // Upload no Firebase Storage
       const storageRef = ref(storage, `midias/${Date.now()}_${arquivo.name}`);
       await uploadBytes(storageRef, arquivo);
       mediaURL = await getDownloadURL(storageRef);
@@ -105,7 +105,7 @@ formPublicacao.addEventListener("submit", async (e) => {
       data: serverTimestamp()
     });
 
-    // Mensagem de sucesso e reset form
+    // Mostrar mensagem sucesso e resetar formulário
     formPublicacao.style.display = "none";
     msgSucesso.classList.remove("escondido");
     formPublicacao.reset();
@@ -115,7 +115,7 @@ formPublicacao.addEventListener("submit", async (e) => {
   }
 });
 
-// Atualiza mural com os posts
+// Atualiza mural com posts
 function atualizarMural() {
   postsContainer.innerHTML = "";
   posts.forEach((post, index) => {
@@ -124,7 +124,7 @@ function atualizarMural() {
   });
 }
 
-// Cria card post
+// Cria card do post
 function criarCardPost(post, index) {
   const card = document.createElement("div");
   card.classList.add("post-card");
@@ -169,7 +169,7 @@ function abrirModalPost(index) {
   modalPost.classList.remove("escondido");
 }
 
-// Ouve atualizações em tempo real do Firestore e atualiza mural
+// Ouve posts em tempo real e atualiza mural
 const q = query(collection(db, "posts"), orderBy("data", "desc"));
 onSnapshot(q, (snapshot) => {
   posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
