@@ -6,23 +6,35 @@ import {
   getStorage, ref, uploadBytes, getDownloadURL
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
 
+// Configuração Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDx7T6bMgtNFuiI3ZNngYN-a7fhslXeR9k",
   authDomain: "recordacoes-koinoniaa.firebaseapp.com",
   projectId: "recordacoes-koinoniaa",
-  storageBucket: "recordacoes-koinoniaa.appspot.com", // ✅ Aqui está o conserto!
+  storageBucket: "recordacoes-koinoniaa.appspot.com",
   messagingSenderId: "18159549925",
   appId: "1:18159549925:web:f7d9f28e73b65fc76fc30c"
 };
 
+// Inicialização Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+// Variáveis globais
+let posts = []; // <<< Declarar aqui para evitar ReferenceError
+const postsContainer = document.getElementById("postsContainer"); // Certifique que exista no HTML
+
+// Elementos do DOM
 const btnAbrirPublicacao = document.getElementById("btnAbrirPublicacao");
 const modalPublicar = document.getElementById("modalPublicar");
 const formPublicacao = document.getElementById("formPublicacao");
 const msgSucesso = document.getElementById("msgSucesso");
+const btnFecharPublicar = document.getElementById("btnFecharPublicar");
+const btnFecharModal = document.getElementById("btnFecharModal");
+const modalPost = document.getElementById("modalPost");
+const conteudoPost = document.getElementById("conteudoPost");
+const btnVoltarMural = document.getElementById("btnVoltarMural");
 
 // Abre modal de publicação
 btnAbrirPublicacao.addEventListener("click", () => {
@@ -30,7 +42,6 @@ btnAbrirPublicacao.addEventListener("click", () => {
   msgSucesso.classList.add("escondido");
   formPublicacao.style.display = "block";
 });
-
 
 // Fecha modal publicar
 btnFecharPublicar.addEventListener("click", () => {
@@ -45,7 +56,14 @@ btnFecharModal.addEventListener("click", () => {
   if (video) video.pause();
 });
 
-// Formulário enviar publicação
+// Voltar ao mural após sucesso da publicação
+btnVoltarMural.addEventListener("click", () => {
+  modalPublicar.classList.add("escondido");
+  formPublicacao.style.display = "block";
+  msgSucesso.classList.add("escondido");
+});
+
+// Enviar publicação
 formPublicacao.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -87,7 +105,7 @@ formPublicacao.addEventListener("submit", async (e) => {
       data: serverTimestamp()
     });
 
-    // Mostra mensagem sucesso e esconde formulário
+    // Mensagem de sucesso e reset form
     formPublicacao.style.display = "none";
     msgSucesso.classList.remove("escondido");
     formPublicacao.reset();
@@ -96,17 +114,6 @@ formPublicacao.addEventListener("submit", async (e) => {
     alert("Erro ao enviar a publicação: " + error.message);
   }
 });
-
-
-// Adiciona post no array e atualiza mural
-function adicionarPost(nome, comentario, tipo, media) {
-  posts.unshift({ nome, comentario, tipo, media });
-  atualizarMural();
-
-  formPublicacao.style.display = "none";
-  msgSucesso.classList.remove("escondido");
-  formPublicacao.reset();
-}
 
 // Atualiza mural com os posts
 function atualizarMural() {
@@ -162,15 +169,7 @@ function abrirModalPost(index) {
   modalPost.classList.remove("escondido");
 }
 
-// Botão voltar ao mural após sucesso
-btnVoltarMural.addEventListener("click", () => {
-  modalPublicar.classList.add("escondido");
-  formPublicacao.style.display = "block";
-  msgSucesso.classList.add("escondido");
-});
-
-import { query, orderBy, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
+// Ouve atualizações em tempo real do Firestore e atualiza mural
 const q = query(collection(db, "posts"), orderBy("data", "desc"));
 onSnapshot(q, (snapshot) => {
   posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
